@@ -3,8 +3,10 @@ import { WalletConnect } from './components/WalletConnect'
 import { ChainSelector } from './components/ChainSelector'
 import { ActivityList } from './components/ActivityList'
 import { Search } from 'lucide-react'
+import { useWalletStore } from './store/useWalletStore'
 
 function App() {
+  const { account, isConnecting, connectWallet, disconnectWallet } = useWalletStore();
   return (
     <Layout>
       <div className="relative flex flex-col items-center justify-center pt-10 pb-20 text-center">
@@ -32,8 +34,11 @@ function App() {
               placeholder="Search address/Web3 ID"
             />
           </div>
-          <button className="bg-brand-orange hover:bg-[#45b045] text-white font-bold py-4 px-8 rounded-full shadow-lg hover:shadow-xl transition-all w-full md:w-auto">
-            Connect Wallet
+          <button 
+            onClick={() => account ? disconnectWallet() : connectWallet()}
+            disabled={isConnecting}
+            className="bg-brand-orange hover:bg-[#45b045] text-white font-bold py-4 px-8 rounded-full shadow-lg hover:shadow-xl transition-all w-full md:w-auto disabled:opacity-50 disabled:cursor-not-allowed">
+            {isConnecting ? "Connecting..." : account ? `${account.slice(0,6)}...${account.slice(-4)}` : "Connect Wallet"}
           </button>
         </div>
 
