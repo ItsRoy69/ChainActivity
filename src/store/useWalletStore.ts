@@ -49,11 +49,20 @@ export const useWalletStore = create<WalletStore>()(
         set({ account: null, chainId: null, transactions: [] });
       },
 
-      selectChain: (chainId: ChainId) => {
+      selectChain: async (chainId: ChainId) => {
         set({ selectedChain: chainId });
         const { account } = get();
+        
         if (account) {
-            get().fetchHistory();
+            try {
+                const { switchNetwork } = await import('../utils/ethereum');
+                await switchNetwork(chainId);
+                
+                get().fetchHistory();
+            } catch (err: any) {
+                console.error("Failed to switch network:", err);
+                set({ error: "Failed to switch network. Please try again." });
+            }
         }
       },
 
@@ -73,6 +82,8 @@ export const useWalletStore = create<WalletStore>()(
          }
       },
 
+      setAccount: (account: string | null) => set({ account, transactions: [] }),
+      setChainId: (chainId: ChainId) => set({ chainId }),
       clearError: () => set({ error: null })
     }),
     {

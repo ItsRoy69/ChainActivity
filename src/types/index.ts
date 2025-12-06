@@ -35,7 +35,9 @@ export interface WalletState {
 
   connectWallet: () => Promise<void>;
   disconnectWallet: () => void;
-  selectChain: (chainId: ChainId) => void;
+  selectChain: (chainId: ChainId) => Promise<void>;
   fetchHistory: () => Promise<void>;
   clearError: () => void;
+  setAccount: (account: string | null) => void;
+  setChainId: (chainId: ChainId) => void;
 }

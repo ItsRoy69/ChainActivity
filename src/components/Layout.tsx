@@ -9,7 +9,25 @@ interface LayoutProps {
 }
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const { account, isConnecting, connectWallet, disconnectWallet } = useWalletStore();
+  const { account, isConnecting, connectWallet, disconnectWallet, setAccount, setChainId } = useWalletStore();
+
+  React.useEffect(() => {
+    if (window.ethereum) {
+      window.ethereum.on('chainChanged', (chainId: string) => {
+        setChainId(chainId as any);
+        window.location.reload();
+      });
+
+      window.ethereum.on('accountsChanged', (accounts: string[]) => {
+        if (accounts.length > 0) {
+          setAccount(accounts[0]);
+        } else {
+          setAccount(null);
+        }
+      });
+    }
+  }, [setAccount, setChainId]);
+
   return (
     <div className="bg-white font-sans text-[#333333]">
       <ErrorToast />
@@ -21,14 +39,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             </div>
             <span className="text-xl font-bold tracking-tight text-[#1A1A1A]">ChainActivity</span>
           </div>
-          
-          <nav className="hidden md:flex items-center gap-6 text-gray-500 font-medium">
-            <a href="#" className="hover:text-brand-orange transition-colors">Portfolio</a>
-            <a href="#" className="hover:text-brand-orange transition-colors">Swap</a>
-            <a href="#" className="hover:text-brand-orange transition-colors">Community</a>
-            <a href="#" className="hover:text-brand-orange transition-colors">Portfolio API</a>
-            <a href="#" className="hover:text-brand-orange transition-colors">More</a>
-          </nav>
+    
         </div>
 
         <div>

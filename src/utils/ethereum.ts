@@ -41,3 +41,38 @@ export const fetchWalletHistory = async (address: string, chainId: ChainId): Pro
     valueUsd: (Number(tx.value || 0) * 2500).toFixed(2)
   }));
 };
+
+export const switchNetwork = async (chainId: ChainId): Promise<void> => {
+  if (!window.ethereum) throw new Error("MetaMask is not installed");
+
+  try {
+    await window.ethereum.request({
+      method: 'wallet_switchEthereumChain',
+      params: [{ chainId }],
+    });
+  } catch (error: any) {
+    if (error.code === 4902) {
+      const { CHAINS } = await import('./chains');
+      const chain = CHAINS[chainId];
+      
+      await window.ethereum.request({
+        method: 'wallet_addEthereumChain',
+        params: [
+          {
+            chainId: chain.id,
+            chainName: chain.name,
+            rpcUrls: [chain.rpcUrl],
+            nativeCurrency: {
+              name: chain.currency,
+              symbol: chain.currency, 
+              decimals: 18,
+            },
+            blockExplorerUrls: [chain.explorerUrl],
+          },
+        ],
+      });
+    } else {
+      throw error;
+    }
+  }
+};

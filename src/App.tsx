@@ -16,7 +16,7 @@ function App() {
         </h1>
         
         <p className="text-[#666666] text-sm md:text-base font-medium mb-12">
-          Whale Asset Tracking, Paid Consultations, and Web3 Dynamic Community
+          Track your wallet activity across Ethereum and compatible EVM chains
         </p>
 
         <h2 className="text-xl text-[#333333] font-medium mb-6">
