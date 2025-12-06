@@ -13,18 +13,27 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   React.useEffect(() => {
     if (window.ethereum) {
-      window.ethereum.on('chainChanged', (chainId: string) => {
+      const handleChainChanged = (chainId: string) => {
         setChainId(chainId as any);
-        window.location.reload();
-      });
+      };
 
-      window.ethereum.on('accountsChanged', (accounts: string[]) => {
+      const handleAccountsChanged = (accounts: string[]) => {
         if (accounts.length > 0) {
           setAccount(accounts[0]);
         } else {
           setAccount(null);
         }
-      });
+      };
+
+      window.ethereum.on('chainChanged', handleChainChanged);
+      window.ethereum.on('accountsChanged', handleAccountsChanged);
+
+      return () => {
+        if (window.ethereum.removeListener) {
+          window.ethereum.removeListener('chainChanged', handleChainChanged);
+          window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+        }
+      };
     }
   }, [setAccount, setChainId]);
 

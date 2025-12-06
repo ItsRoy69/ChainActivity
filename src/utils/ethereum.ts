@@ -43,7 +43,7 @@ export const fetchWalletHistory = async (address: string, chainId: ChainId): Pro
 };
 
 export const switchNetwork = async (chainId: ChainId): Promise<void> => {
-  if (!window.ethereum) throw new Error("MetaMask is not installed");
+  if (!window.ethereum) throw new Error("No Ethereum wallet found");
 
   try {
     await window.ethereum.request({

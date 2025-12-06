@@ -22,7 +22,7 @@ export const useWalletStore = create<WalletStore>()(
         set({ isConnecting: true, error: null });
         try {
           if (!window.ethereum) {
-            throw new Error('MetaMask is not installed');
+            throw new Error('No Ethereum wallet found');
           }
           
           const provider = new ethers.BrowserProvider(window.ethereum);
