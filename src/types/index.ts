@@ -16,6 +16,7 @@ export interface Transaction {
   from: string;
   to: string;
   value: string;
+  valueUsd?: string;
   timestamp: number;
   status: TransactionStatus;
   chainId: ChainId;
@@ -36,4 +37,5 @@ export interface WalletState {
   disconnectWallet: () => void;
   selectChain: (chainId: ChainId) => void;
   fetchHistory: () => Promise<void>;
+  clearError: () => void;
 }

@@ -2,6 +2,8 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useWalletStore } from '../store/useWalletStore';
 
+import { ErrorToast } from './ErrorToast';
+
 interface LayoutProps {
   children: React.ReactNode;
 }
@@ -9,7 +11,8 @@ interface LayoutProps {
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { account, isConnecting, connectWallet, disconnectWallet } = useWalletStore();
   return (
-    <div className="min-h-screen bg-white font-sans text-[#333333]">
+    <div className="bg-white font-sans text-[#333333]">
+      <ErrorToast />
       <header className="flex justify-between items-center py-4 px-6 md:px-10 max-w-[1440px] mx-auto w-full">
         <div className="flex items-center gap-8">
           <div className="flex items-center gap-2">

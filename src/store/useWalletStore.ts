@@ -71,7 +71,9 @@ export const useWalletStore = create<WalletStore>()(
          } finally {
              set({ isLoadingActivity: false });
          }
-      }
+      },
+
+      clearError: () => set({ error: null })
     }),
     {
       name: 'chain-activity-storage',

@@ -41,25 +41,23 @@ function App() {
             {isConnecting ? "Connecting..." : account ? `${account.slice(0,6)}...${account.slice(-4)}` : "Connect Wallet"}
           </button>
         </div>
-
-        <div className="mt-20 w-full max-w-4xl text-left px-6">
-           <h3 className="text-xl font-bold text-[#1A1A1A] mb-6">Tracking any Whale's Portfolio</h3>
-        </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 opacity-80 scale-95 origin-top">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-2">
-           <ChainSelector />
-           <WalletConnect />
-        </div>
-
-        <div className="mt-8">
-          <div className="flex justify-between items-baseline mb-4">
-          <h2 className="text-xl font-semibold text-[#1A1A1A]">Recent Activity</h2>
+      {account && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-2">
+             <ChainSelector />
+             <WalletConnect />
           </div>
-          <ActivityList />
+
+          <div className="mt-8">
+            <div className="flex justify-between items-baseline mb-4">
+            <h2 className="text-xl font-semibold text-[#1A1A1A]">Recent Activity</h2>
+            </div>
+            <ActivityList />
+          </div>
         </div>
-      </div>
+      )}
     </Layout>
   )
 }

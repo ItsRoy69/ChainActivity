@@ -15,10 +15,10 @@ export const ActivityList: React.FC = () => {
                 animate={{ opacity: 1 }}
                 className="text-center py-20 text-gray-500 glass-panel"
             >
-                <div className="mb-4 text-gray-600 bg-white/5 w-16 h-16 rounded-full mx-auto flex items-center justify-center">
+                <div className="mb-4 text-gray-400 bg-gray-100 w-16 h-16 rounded-full mx-auto flex items-center justify-center">
                     <Clock size={32} />
                 </div>
-                <h3 className="text-lg font-medium text-white mb-2">No Wallet Connected</h3>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">No Wallet Connected</h3>
                 <p>Connect your wallet to view blockchain activity.</p>
             </motion.div>
         );
@@ -37,10 +37,10 @@ export const ActivityList: React.FC = () => {
     if (transactions.length === 0) {
         return (
             <div className="text-center py-20 text-gray-500 glass-panel">
-                 <div className="mb-4 text-gray-600 bg-white/5 w-16 h-16 rounded-full mx-auto flex items-center justify-center">
+                 <div className="mb-4 text-gray-400 bg-gray-100 w-16 h-16 rounded-full mx-auto flex items-center justify-center">
                     <Clock size={32} />
                 </div>
-                <p>No transactions found on {chainConfig.name}.</p>
+                <p className="text-gray-900 font-medium">No transactions found on {chainConfig.name}.</p>
             </div>
         );
     }
@@ -63,30 +63,37 @@ export const ActivityList: React.FC = () => {
                             <div className={`p-3 rounded-full shrink-0 ${isSent ? 'bg-red-500/10 text-red-500' : 'bg-green-500/10 text-green-500'}`}>
                                 {isSent ? <ArrowUpRight size={20} /> : <ArrowDownLeft size={20} />}
                             </div>
-                            <div>
-                                <h3 className="font-medium text-white flex items-center gap-2 flex-wrap">
-                                    {isSent ? 'Sent' : 'Received'} {tx.tokenSymbol}
-                                    <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded-full border ${
-                                        tx.status === 'confirmed' ? 'bg-green-500/10 border-green-500/20 text-green-400' : 
-                                        tx.status === 'pending' ? 'bg-yellow-500/10 border-yellow-500/20 text-yellow-400' : 'bg-red-500/10 border-red-500/20 text-red-400'
-                                    }`}>
-                                        {tx.status}
-                                    </span>
-                                </h3>
-                                <p className="text-xs text-gray-400 flex items-center gap-1 mt-1">
-                                    <Clock size={12} />
-                                    {new Date(tx.timestamp).toLocaleString(undefined, {
-                                        dateStyle: 'medium',
-                                        timeStyle: 'short'
-                                    })}
-                                </p>
-                            </div>
+                        <div>
+                            <h3 className="font-medium text-gray-900 flex items-center gap-2 flex-wrap">
+                                {isSent ? 'Sent' : 'Received'} {tx.tokenSymbol}
+                                <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded-full border ${
+                                    tx.status === 'confirmed' ? 'bg-green-500/10 border-green-500/20 text-green-600' : 
+                                    tx.status === 'pending' ? 'bg-yellow-500/10 border-yellow-500/20 text-yellow-600' : 'bg-red-500/10 border-red-500/20 text-red-600'
+                                }`}>
+                                    {tx.status}
+                                </span>
+                            </h3>
+                            <p className="text-xs text-gray-500 flex items-center gap-1 mt-1">
+                                <Clock size={12} />
+                                {new Date(tx.timestamp).toLocaleString(undefined, {
+                                    dateStyle: 'medium',
+                                    timeStyle: 'short'
+                                })}
+                            </p>
                         </div>
-                        
-                        <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center border-t border-glassBorder sm:border-t-0 pt-3 sm:pt-0 mt-0">
-                            <p className={`font-bold text-lg mb-1 break-all ${isSent ? 'text-white' : 'text-green-400'}`}>
+                    </div>
+                    
+                    <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center border-t border-gray-100 sm:border-t-0 pt-3 sm:pt-0 mt-0">
+                        <div className="text-right">
+                            <p className={`font-bold text-lg mb-0 break-all ${isSent ? 'text-gray-900' : 'text-green-600'}`}>
                                 {isSent ? '-' : '+'}{Number(tx.value).toFixed(4)} {tx.tokenSymbol}
                             </p>
+                            {tx.valueUsd && (
+                                <p className="text-xs text-gray-500 font-medium">
+                                    ≈ ${tx.valueUsd}
+                                </p>
+                            )}
+                        </div>
                             <a 
                                 href={explorerLink} 
                                 target="_blank" 

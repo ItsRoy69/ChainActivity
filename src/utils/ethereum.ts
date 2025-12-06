@@ -25,7 +25,8 @@ export const fetchWalletHistory = async (address: string, chainId: ChainId): Pro
     fromAddress: address,
     category: [AssetTransfersCategory.EXTERNAL, AssetTransfersCategory.ERC20],
     maxCount: 10,
-    order: SortingOrder.DESCENDING 
+    order: SortingOrder.DESCENDING,
+    withMetadata: true
   });
 
   return data.transfers.map(tx => ({
@@ -33,9 +34,10 @@ export const fetchWalletHistory = async (address: string, chainId: ChainId): Pro
     from: tx.from,
     to: tx.to || '',
     value: tx.value?.toString() || '0',
-    timestamp: Date.now(), 
+    timestamp: tx.metadata.blockTimestamp ? new Date(tx.metadata.blockTimestamp).getTime() : Date.now(),
     status: 'confirmed',
     chainId,
     tokenSymbol: tx.asset || 'ETH',
+    valueUsd: (Number(tx.value || 0) * 2500).toFixed(2)
   }));
 };
