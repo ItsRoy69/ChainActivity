@@ -17,13 +17,13 @@ export const ChainSelector: React.FC = () => {
                         onClick={() => selectChain(chain.id)}
                         className={clsx(
                             "relative px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap outline-none",
-                            isSelected ? "text-white" : "text-gray-400 hover:text-gray-200"
+                            isSelected ? "text-gray-900" : "text-gray-500 hover:text-gray-700"
                         )}
                     >
                         {isSelected && (
                             <motion.div
                                 layoutId="activeChain"
-                                className="absolute inset-0 bg-white/10 rounded-lg"
+                                className="absolute inset-0 bg-brand-orange/20 rounded-lg"
                                 transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                             />
                         )}

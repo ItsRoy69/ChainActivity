@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Layout } from './components/Layout'
 import { WalletConnect } from './components/WalletConnect'
 import { ChainSelector } from './components/ChainSelector'
@@ -6,7 +7,15 @@ import { Search } from 'lucide-react'
 import { useWalletStore } from './store/useWalletStore'
 
 function App() {
-  const { account, isConnecting, connectWallet, disconnectWallet } = useWalletStore();
+  const { account, isConnecting, connectWallet, disconnectWallet, fetchHistory, setAccount } = useWalletStore();
+  const [searchInput, setSearchInput] = useState('');
+
+  const handleSearch = () => {
+    if (searchInput.trim()) {
+      setAccount(searchInput.trim());
+      fetchHistory();
+    }
+  };
   return (
     <Layout>
       <div className="relative flex flex-col items-center justify-center pt-10 pb-20 text-center">
@@ -25,11 +34,17 @@ function App() {
 
         <div className="flex flex-col md:flex-row items-center gap-4 w-full max-w-2xl px-4">
           <div className="relative flex-1 w-full">
-            <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+            <div 
+              className="absolute inset-y-0 left-4 flex items-center cursor-pointer hover:text-brand-orange transition-colors"
+              onClick={handleSearch}
+            >
               <Search className="h-5 w-5 text-gray-500" />
             </div>
             <input
               type="text"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
               className="w-full py-4 pl-12 pr-4 rounded-full border border-gray-200 bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-transparent shadow-sm"
               placeholder="Search address/Web3 ID"
             />

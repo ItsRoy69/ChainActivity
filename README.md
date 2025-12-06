@@ -1,6 +1,6 @@
 # ChainActivity
 
-ChainActivity is a React-based portfolio tracker for Ethereum and compatible EVM chains. It allows users to connect their wallets, view their balances, and track recent transaction activity across supported networks.
+ChainActivity is a React-based portfolio tracker for Ethereum and compatible EVM chains. It allows users to connect their wallets, view their balances, track recent transaction activity across supported networks, and search for the activity of any wallet address.
 
 ## 🏗 Architecture and Component Structure
 
@@ -86,6 +86,5 @@ The application follows a modern React functional component architecture, utiliz
 
 -   **Dynamic Pricing**: Integrate a price feed (e.g., CoinGecko API) to show accurate real-time USD values for transactions.
 -   **Pagination**: Implement "Load More" functionality for transaction history.
--   **Search Functionality**: The search bar in the UI is currently a placeholder or limited; wiring it up to view any address's activity (read-only mode) would be a key improvement.
 -   **Multi-Chain Support**: Currently supports Ethereum Mainnet, Polygon, Arbitrum, and Optimism. Adding more chains requires updating `ethereum.ts` and `chains.ts`.
 -   **Error Handling**: Better UI feedback for API rate limits or network timeouts.
