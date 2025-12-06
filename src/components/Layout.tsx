@@ -1,32 +1,47 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+
 interface LayoutProps {
   children: React.ReactNode;
 }
+
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="max-w-4xl mx-auto"
-    >
-      <header className="flex justify-between items-center mb-8 px-2 md:px-0">
+    <div className="min-h-screen bg-white font-sans text-[#333333]">
+      <header className="flex justify-between items-center py-4 px-6 md:px-10 max-w-[1440px] mx-auto w-full">
+        <div className="flex items-center gap-8">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-brand-orange rounded-lg flex items-center justify-center">
+              <span className="font-bold text-white text-lg">C</span>
+            </div>
+            <span className="text-xl font-bold tracking-tight text-[#1A1A1A]">ChainActivity</span>
+          </div>
+          
+          <nav className="hidden md:flex items-center gap-6 text-gray-500 font-medium">
+            <a href="#" className="hover:text-brand-orange transition-colors">Portfolio</a>
+            <a href="#" className="hover:text-brand-orange transition-colors">Swap</a>
+            <a href="#" className="hover:text-brand-orange transition-colors">Community</a>
+            <a href="#" className="hover:text-brand-orange transition-colors">Portfolio API</a>
+            <a href="#" className="hover:text-brand-orange transition-colors">More</a>
+          </nav>
+        </div>
+
         <div>
-          <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
-            ChainActivity
-          </h1>
-          <p className="text-gray-400 text-sm mt-1">Multi-chain Wallet Dashboard</p>
+           <button className="text-brand-orange hover:text-[#45b045] font-medium border-b border-brand-orange/30 hover:border-brand-orange transition-all pb-0.5">
+             Connect Wallet
+           </button>
         </div>
       </header>
       
-      <main className="space-y-6">
-        {children}
+      <main className="w-full">
+        <motion.div 
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          {children}
+        </motion.div>
       </main>
-      
-      <footer className="mt-12 text-center text-gray-600 text-sm py-4">
-        <p>Built for Assessment • {new Date().getFullYear()}</p>
-      </footer>
-    </motion.div>
+    </div>
   );
 };

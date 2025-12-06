@@ -1,4 +1,4 @@
-import { Chain, ChainId } from '../types';
+import type { Chain, ChainId } from '../types';
 
 export const CHAINS: Record<ChainId, Chain> = {
   '0x1': {

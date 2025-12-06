@@ -23,10 +23,10 @@ export const WalletConnect: React.FC = () => {
       onClick={handleConnect}
       disabled={isConnecting}
       className={clsx(
-        "flex items-center gap-2 px-6 py-2.5 rounded-lg font-medium transition-all duration-200 outline-none focus:ring-2 focus:ring-blue-500/50",
+        "flex items-center gap-2 px-6 py-2.5 rounded-lg font-medium transition-all duration-200 outline-none focus:ring-2 focus:ring-brand-orange/50",
         account 
           ? "bg-glass border border-glassBorder hover:bg-white/10 text-white" 
-          : "bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-500/20"
+          : "bg-brand-orange hover:bg-[#45b045] text-white shadow-lg shadow-brand-orange/20"
       )}
     >
       {isConnecting ? (

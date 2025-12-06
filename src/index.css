@@ -1,14 +1,20 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Lato', 'PingFang SC', 'Microsoft YaHei', Helvetica, Arial, sans-serif;
+  --color-glass: rgba(255, 255, 255, 0.05);
+  --color-glassBorder: rgba(255, 255, 255, 0.1);
+  --color-brand-orange: #5CE65C;
+  --color-brand-dark: #1A1A1A;
+}
 
 :root {
-  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Lato', 'PingFang SC', 'Microsoft YaHei', Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-  color-scheme: dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #0c0e12; 
+  color-scheme: light;
+  color: #333333;
+  background-color: #ffffff;
 }
 
 body {
@@ -18,7 +24,7 @@ body {
   justify-content: center;
   min-width: 320px;
   min-height: 100vh;
-  @apply bg-gradient-to-br from-gray-900 via-[#0a0a0a] to-black text-white selection:bg-purple-500/30;
+  @apply bg-white text-gray-900 selection:bg-brand-orange/30;
 }
 
 #root {

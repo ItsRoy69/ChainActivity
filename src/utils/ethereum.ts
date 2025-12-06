@@ -1,31 +1,41 @@
-import { ethers } from 'ethers';
-import { ChainId, Transaction } from '../types';
-import { CHAINS } from './chains';
+import { Network, Alchemy, AssetTransfersCategory, SortingOrder } from "alchemy-sdk";
+import type { ChainId, Transaction } from '../types';
 
-
-const generateMockTransactions = (address: string, chainId: ChainId): Transaction[] => {
-  const chainName = CHAINS[chainId].name;
-  const symbol = CHAINS[chainId].currency;
-  
-  return Array.from({ length: 5 }).map((_, i) => ({
-    hash: ethers.hexlify(ethers.randomBytes(32)),
-    from: i % 2 === 0 ? address : ethers.hexlify(ethers.randomBytes(20)),
-    to: i % 2 === 0 ? ethers.hexlify(ethers.randomBytes(20)) : address,
-    value: ethers.formatEther(ethers.parseEther((Math.random() * 2).toFixed(4))),
-    timestamp: Date.now() - (i * 3600 * 1000) - (Math.random() * 1000 * 60),
-    status: i === 0 ? 'pending' : 'confirmed',
-    chainId,
-    tokenSymbol: symbol,
-  }));
+const getAlchemyNetwork = (chainId: ChainId): Network => {
+  switch (chainId) {
+    case '0x89': return Network.MATIC_MAINNET;
+    case '0xa4b1': return Network.ARB_MAINNET;
+    case '0xa': return Network.OPT_MAINNET;
+    default: return Network.ETH_MAINNET;
+  }
 };
 
 export const fetchWalletHistory = async (address: string, chainId: ChainId): Promise<Transaction[]> => {
-  await new Promise(resolve => setTimeout(resolve, 1500));
+  const network = getAlchemyNetwork(chainId);
   
-  try {     
-     return generateMockTransactions(address, chainId);
-  } catch (error) {
-    console.error("Failed to fetch history", error);
-    throw error;
-  }
+  const config = {
+      apiKey: import.meta.env.VITE_ALCHEMY_API_KEY,
+      network: network,
+  };
+  
+  const alchemy = new Alchemy(config);
+
+  const data = await alchemy.core.getAssetTransfers({
+    fromBlock: "0x0",
+    fromAddress: address,
+    category: [AssetTransfersCategory.EXTERNAL, AssetTransfersCategory.ERC20],
+    maxCount: 10,
+    order: SortingOrder.DESCENDING 
+  });
+
+  return data.transfers.map(tx => ({
+    hash: tx.hash,
+    from: tx.from,
+    to: tx.to || '',
+    value: tx.value?.toString() || '0',
+    timestamp: Date.now(), 
+    status: 'confirmed',
+    chainId,
+    tokenSymbol: tx.asset || 'ETH',
+  }));
 };
