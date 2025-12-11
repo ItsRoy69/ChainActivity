@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useWalletStore } from '../store/useWalletStore';
-import { ArrowUpRight, ArrowDownLeft, Clock, ExternalLink } from 'lucide-react';
+import { ArrowUpRight, ArrowDownLeft, Clock, ExternalLink, Download, Filter } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { CHAINS } from '../utils/chains';
 
@@ -11,6 +11,42 @@ export const ActivityList: React.FC = () => {
 
     const toggleExpand = (hash: string) => {
         setExpandedTx(prev => prev === hash ? null : hash);
+    };
+
+    const [filterType, setFilterType] = useState<'all' | 'sent' | 'received'>('all');
+
+    const filteredTransactions = transactions.filter(tx => {
+        if (filterType === 'all') return true;
+        const isSent = tx.from.toLowerCase() === account?.toLowerCase();
+        return filterType === 'sent' ? isSent : !isSent;
+    });
+
+    const exportToCSV = () => {
+        if (!transactions.length) return;
+        
+        const headers = ['Hash', 'Type', 'From', 'To', 'Value', 'Token', 'Timestamp', 'Date'];
+        const rows = transactions.map(tx => {
+            const isSent = tx.from.toLowerCase() === account?.toLowerCase();
+            return [
+                tx.hash,
+                isSent ? 'SENT' : 'RECEIVED',
+                tx.from,
+                tx.to,
+                tx.value,
+                tx.tokenSymbol,
+                tx.timestamp,
+                new Date(tx.timestamp).toLocaleString()
+            ].join(',');
+        });
+        
+        const csvContent = "data:text/csv;charset=utf-8," + [headers.join(','), ...rows].join('\n');
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `transactions_${selectedChain}_${new Date().toISOString().split('T')[0]}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     };
 
     if (!account) {
@@ -51,8 +87,31 @@ export const ActivityList: React.FC = () => {
     }
 
     return (
-        <div className="space-y-3">
-            {transactions.map((tx, index) => {
+        <div className="space-y-4">
+            <div className="flex justify-between items-center mb-4">
+                <div className="flex items-center gap-2">
+                    <Filter size={16} className="text-gray-500" />
+                    <select 
+                        value={filterType}
+                        onChange={(e) => setFilterType(e.target.value as any)}
+                        className="bg-transparent border-none text-sm font-medium text-gray-700 dark:text-gray-300 focus:ring-0 cursor-pointer"
+                    >
+                        <option value="all">All Transactions</option>
+                        <option value="sent">Sent</option>
+                        <option value="received">Received</option>
+                    </select>
+                </div>
+                <button 
+                    onClick={exportToCSV}
+                    className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-brand-orange bg-brand-orange/10 hover:bg-brand-orange/20 rounded-full transition-colors"
+                >
+                    <Download size={14} />
+                    Export CSV
+                </button>
+            </div>
+
+            <div className="space-y-3">
+            {filteredTransactions.map((tx, index) => {
                 const isSent = tx.from.toLowerCase() === account.toLowerCase();
                 const explorerLink = `${chainConfig.explorerUrl}/tx/${tx.hash}`;
 
@@ -152,5 +211,6 @@ export const ActivityList: React.FC = () => {
                 </div>
             )}
         </div>
+    </div>
     );
 };
