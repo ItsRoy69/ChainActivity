@@ -23,6 +23,25 @@ export interface Transaction {
   tokenSymbol: string;
 }
 
+export interface Token {
+    symbol: string;
+    name: string;
+    balance: string;
+    contractAddress: string;
+    logo?: string;
+    decimals: number;
+    isNative?: boolean;
+}
+
+export interface NFT {
+    contractAddress: string;
+    tokenId: string;
+    name: string;
+    collectionName: string;
+    image?: string;
+    type: string;
+}
+
 export interface WalletState {
   account: string | null;
   chainId: ChainId | null;
@@ -31,13 +50,20 @@ export interface WalletState {
   transactions: Transaction[];
   selectedChain: ChainId;
   error: string | null;
+  gasPrice: string | null;
+  tokens: Token[];
+  nfts: NFT[];
+  pageKey?: string;
+  hasMore: boolean;
   
-
   connectWallet: () => Promise<void>;
   disconnectWallet: () => void;
   selectChain: (chainId: ChainId) => Promise<void>;
-  fetchHistory: () => Promise<void>;
+  fetchHistory: (reset?: boolean) => Promise<void>;
+  fetchTokens: () => Promise<void>;
+  fetchNFTs: () => Promise<void>;
   clearError: () => void;
   setAccount: (account: string | null) => void;
   setChainId: (chainId: ChainId) => void;
+  fetchGasPrice: () => Promise<void>;
 }

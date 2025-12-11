@@ -17,7 +17,7 @@ export const ChainSelector: React.FC = () => {
                         onClick={() => selectChain(chain.id)}
                         className={clsx(
                             "relative px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap outline-none",
-                            isSelected ? "text-gray-900" : "text-gray-500 hover:text-gray-700"
+                            isSelected ? "text-gray-900 dark:text-gray-100" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
                         )}
                     >
                         {isSelected && (

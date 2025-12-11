@@ -1,8 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { WalletState, ChainId } from '../types';
-import { DEFAULT_CHAIN } from '../utils/chains';
-import { fetchWalletHistory } from '../utils/ethereum';
+import { DEFAULT_CHAIN, CHAINS } from '../utils/chains';
 import { ethers } from 'ethers';
 
 interface WalletStore extends WalletState {}
@@ -16,7 +15,49 @@ export const useWalletStore = create<WalletStore>()(
       isLoadingActivity: false,
       transactions: [],
       selectedChain: DEFAULT_CHAIN,
+      gasPrice: null,
+      tokens: [],
+      nfts: [],
       error: null,
+      pageKey: undefined,
+      hasMore: false,
+
+      fetchGasPrice: async () => {
+         const { selectedChain } = get();
+         try {
+             const { fetchCurrentGasPrice } = await import('../utils/ethereum');
+             const price = await fetchCurrentGasPrice(selectedChain);
+             set({ gasPrice: price });
+         } catch (error) {
+             console.error("Failed to fetch gas price store:", error);
+         }
+      },
+
+      fetchTokens: async () => {
+          const { account, selectedChain } = get();
+          if (!account) return;
+
+          try {
+              const { fetchTokenBalances } = await import('../utils/ethereum');
+              const tokens = await fetchTokenBalances(account, selectedChain);
+              set({ tokens });
+          } catch (error) {
+              console.error("Failed to fetch tokens:", error);
+          }
+      },
+
+      fetchNFTs: async () => {
+          const { account, selectedChain } = get();
+          if (!account) return;
+
+          try {
+              const { fetchNFTs } = await import('../utils/ethereum');
+              const nfts = await fetchNFTs(account, selectedChain);
+              set({ nfts });
+          } catch (error) {
+              console.error("Failed to fetch NFTs:", error);
+          }
+      },
 
       connectWallet: async () => {
         set({ isConnecting: true, error: null });
@@ -30,15 +71,31 @@ export const useWalletStore = create<WalletStore>()(
           const network = await provider.getNetwork();
           
           
+          
           const chainIdHex = '0x' + network.chainId.toString(16);
+          const isSupported = Object.keys(CHAINS).includes(chainIdHex);
+
           set({ 
             account: accounts[0], 
-            chainId: chainIdHex as ChainId 
+            chainId: chainIdHex as ChainId,
+            selectedChain: isSupported ? (chainIdHex as ChainId) : DEFAULT_CHAIN
           });
           
-          get().fetchHistory();
+          get().fetchHistory(true);
+          get().fetchTokens();
+          get().fetchNFTs();
 
         } catch (err: any) {
+          if (err.code === 4001 || err.code === -32002) {
+             set({ error: null });
+             return;
+          }
+           if (err.error && (err.error.code === -32002 || err.error.code === 4001)) {
+              set({ error: null });
+              return;
+           }
+
+          console.error("Connection error:", err);
           set({ error: err.message || 'Failed to connect wallet' });
         } finally {
           set({ isConnecting: false });
@@ -46,7 +103,7 @@ export const useWalletStore = create<WalletStore>()(
       },
 
       disconnectWallet: () => {
-        set({ account: null, chainId: null, transactions: [] });
+        set({ account: null, chainId: null, transactions: [], tokens: [], nfts: [], pageKey: undefined, hasMore: false, selectedChain: DEFAULT_CHAIN });
       },
 
       selectChain: async (chainId: ChainId) => {
@@ -57,8 +114,11 @@ export const useWalletStore = create<WalletStore>()(
             try {
                 const { switchNetwork } = await import('../utils/ethereum');
                 await switchNetwork(chainId);
+                await switchNetwork(chainId);
                 
-                get().fetchHistory();
+                get().fetchHistory(true);
+                get().fetchTokens();
+                get().fetchNFTs();
             } catch (err: any) {
                 console.error("Failed to switch network:", err);
                 set({ error: "Failed to switch network. Please try again." });
@@ -66,14 +126,26 @@ export const useWalletStore = create<WalletStore>()(
         }
       },
 
-      fetchHistory: async () => {
-         const { account, selectedChain } = get();
+      fetchHistory: async (reset = false) => {
+         const { account, selectedChain, pageKey } = get();
          if (!account) return;
 
          set({ isLoadingActivity: true, error: null });
+         if (reset) {
+             set({ transactions: [], pageKey: undefined, hasMore: false });
+         }
+
          try {
-             const txs = await fetchWalletHistory(account, selectedChain);
-             set({ transactions: txs });
+             const keyToUse = reset ? undefined : pageKey;
+             
+             const { fetchWalletHistory } = await import('../utils/ethereum');
+             const response = await fetchWalletHistory(account, selectedChain, keyToUse);
+             
+             set((state) => ({ 
+                 transactions: reset ? response.transactions : [...state.transactions, ...response.transactions],
+                 pageKey: response.pageKey,
+                 hasMore: !!response.pageKey
+             }));
          } catch (err: any) {
              console.error("Fetch history error:", err);
              set({ error: "Failed to fetch history" });
